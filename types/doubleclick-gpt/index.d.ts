@@ -4,49 +4,49 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 declare namespace googletag {
-    export type SingleSizeArray = number[];
+    type SingleSizeArray = [number, number];
 
-    export type NamedSize = string;
+    type NamedSize = string;
 
-    export type SingleSize = SingleSizeArray | NamedSize;
+    type SingleSize = SingleSizeArray | NamedSize;
 
-    export type MultiSize = SingleSize[];
+    type MultiSize = SingleSize[];
 
-    export type GeneralSize = SingleSize | MultiSize;
+    type GeneralSize = SingleSize | MultiSize;
 
-    export type SizeMapping = GeneralSize[];
+    type SizeMapping = GeneralSize[];
 
-    export type SizeMappingArray = SizeMapping[];
+    type SizeMappingArray = SizeMapping[];
 
-    export interface CommandArray {
-        push(f: Function): number;
+    interface CommandArray {
+        push(f: () => void): number;
     }
 
-    export interface Service {
-        addEventListener(
-          eventType: string,
-            listener: (event: events.ImpressionViewableEvent | events.SlotOnloadEvent | events.SlotRenderEndedEvent | events.slotVisibilityChangedEvent) => void
+    interface Service {
+        addEventListener<T extends keyof events.EventNameMap>(
+            eventType: T,
+            listener: (event: events.EventNameMap[T]) => void
         ): void;
     }
 
-    export interface CompanionAdsService extends Service {
+    interface CompanionAdsService extends Service {
         enableSyncLoading(): void;
         setRefreshUnfilledSlots(value: boolean): void;
     }
 
-    export interface ContentService extends Service {
+    interface ContentService extends Service {
         setContent(slot: Slot, content: String): void;
     }
 
-    export interface ResponseInformation {
+    interface ResponseInformation {
         advertiserId: string;
         campaignId: string;
         creativeId?: number;
-        labelIds: number[];
+        labelIds?: number[];
         lineItemId?: number;
     }
 
-    export interface SafeFrameConfig {
+    interface SafeFrameConfig {
         allowOverlayExpansion?: boolean;
         allowPushExpansion?: boolean;
         sandbox?: boolean;
@@ -71,7 +71,7 @@ declare namespace googletag {
         sizeMapping(): SizeMappingBuilder;
     }
 
-    export interface Slot {
+    interface Slot {
         addService(service: Service): Slot;
         clearCategoryExclusions(): Slot;
         clearTargeting(opt_key?: string): Slot;
@@ -93,7 +93,7 @@ declare namespace googletag {
         setTargeting(key: string, value: string | string[]): Slot;
     }
 
-    export interface PassbackSlot {
+    interface PassbackSlot {
         display(): void;
         get(key: string): string;
         set(key: string, value: string): PassbackSlot;
@@ -104,7 +104,7 @@ declare namespace googletag {
         updateTargetingFromMap(map: Object): PassbackSlot;
     }
 
-    export interface PubAdsService extends Service {
+    interface PubAdsService extends Service {
         clear(opt_slots?: Slot[]): boolean;
         clearCategoryExclusions(): PubAdsService;
         clearTagForChildDirectedTreatment(): PubAdsService;
@@ -137,35 +137,54 @@ declare namespace googletag {
         updateCorrelator(): PubAdsService;
     }
 
-    export interface SizeMappingBuilder {
+    interface SizeMappingBuilder {
         addSize(viewportSize: SingleSizeArray, slotSize: GeneralSize): SizeMappingBuilder;
         build(): SizeMappingArray;
     }
 
-    export namespace events {
-        export interface ImpressionViewableEvent {
+    namespace events {
+        interface ImpressionViewableEvent {
             serviceName: string;
             slot: Slot;
         }
 
-        export interface SlotOnloadEvent {
+        interface SlotOnloadEvent {
             serviceName: string;
             slot: Slot;
         }
 
-        export interface SlotRenderEndedEvent {
-            creativeId?: number;
-            isEmpty: boolean;
-            lineItemId?: number;
+        interface BaseSlotRenderEndedEvent {
             serviceName: string;
-            size: number[] | string;
             slot: Slot;
         }
 
-        export interface slotVisibilityChangedEvent {
+        interface EmptySlotRenderEndedEvent extends BaseSlotRenderEndedEvent {
+            creativeId: undefined;
+            isEmpty: true;
+            lineItemId: undefined;
+            size: undefined;
+        }
+
+        interface FilledSlotRenderEndedEvent extends BaseSlotRenderEndedEvent {
+            creativeId: number;
+            isEmpty: false;
+            lineItemId: number;
+            size: SingleSizeArray;
+        }
+
+        type SlotRenderEndedEvent = EmptySlotRenderEndedEvent | FilledSlotRenderEndedEvent;
+
+        interface slotVisibilityChangedEvent {
             inViewPercentage: number;
             serviceName: string;
             slot: Slot;
+        }
+
+        interface EventNameMap {
+            impressionViewable: events.ImpressionViewableEvent,
+            slotOnload: events.SlotOnloadEvent,
+            slotRenderEnded: events.SlotRenderEndedEvent,
+            slotVisibilityChanged: events.slotVisibilityChangedEvent,
         }
     }
 }

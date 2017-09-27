@@ -242,9 +242,19 @@ googletag.pubads().updateCorrelator();
 // The listener will be called only when the pubads service renders a slot.
 // To listen to companion ads, add a similar listener to
 // googletag.companionAds().
-googletag.pubads().addEventListener("slotRenderEnded", function(event: googletag.events.SlotRenderEndedEvent) {
+googletag.pubads().addEventListener("slotRenderEnded", function(event) {
     console.log("Slot has been rendered:");
     console.log(event);
+
+    // The type of the `event` parameter should be automatically
+    // inferred as `googletag.events.SlotRenderEndedEvent`,
+    // so we can access the `isEmpty` property.
+    if (!event.isEmpty) {
+        // If the `isEmpty` property is `false` the type of `event`
+        // should be refined thanks to the discriminated union,
+        // so we can access the event size without checking for nullability.
+        const [width, height] = event.size;
+    }
 });
 
 // 2. Slot render ended listener, slot specific logic.

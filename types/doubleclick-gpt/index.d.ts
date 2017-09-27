@@ -10,7 +10,10 @@ declare namespace googletag {
 
     type SingleSize = SingleSizeArray | NamedSize;
 
-    type MultiSize = SingleSize[];
+    // NOTE: the `number[][]` type is less accurate and the following
+    //       definition would be better without it, but it is necessary
+    //       due to some limitations in Typescript inference.
+    type MultiSize = SingleSize[] | number[][];
 
     type GeneralSize = SingleSize | MultiSize;
 

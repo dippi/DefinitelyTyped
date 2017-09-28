@@ -2,6 +2,7 @@
 // Project: https://developers.google.com/doubleclick-gpt/reference
 // Definitions by: John Wright <https://github.com/johngeorgewright>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.1
 
 declare namespace googletag {
     type SingleSizeArray = [number, number];

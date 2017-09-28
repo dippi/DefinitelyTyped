@@ -1,6 +1,7 @@
 // Type definitions for Google Publisher Tag v104
 // Project: https://developers.google.com/doubleclick-gpt/reference
 // Definitions by: John Wright <https://github.com/johngeorgewright>
+//                 Angelo Di Pilla <https://github.com/dippi>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.1
 
